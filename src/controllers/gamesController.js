@@ -30,7 +30,7 @@ export async function createGame(req, res) {
       `
       INSERT INTO games (name, image, "stockTotal", "categoryId", "pricePerDay") VALUES ('$1', '$2', $3, $4, $5)
     `,
-      [name, image, stockTotal, categoryId, pricePerDay]
+      (values = [name, image, stockTotal, categoryId, pricePerDay])
     );
 
     res.send("sou a rota de criar um jogo");

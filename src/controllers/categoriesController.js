@@ -30,7 +30,7 @@ export async function createCategory(req, res) {
       `
     INSERT INTO categories (name) VALUES ('$1')
     `,
-      [name]
+      (values = [name])
     );
 
     res.status(201).send("Created");
