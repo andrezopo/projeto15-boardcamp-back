@@ -28,9 +28,8 @@ export async function createGame(req, res) {
 
     await connection.query(
       `
-      INSERT INTO games (name, image, "stockTotal", "categoryId", "pricePerDay") VALUES ('$1', '$2', $3, $4, $5)
-    `,
-      (values = [name, image, stockTotal, categoryId, pricePerDay])
+      INSERT INTO games (name, image, "stockTotal", "categoryId", "pricePerDay") VALUES ('${name}', '${image}', ${stockTotal}, ${categoryId}, ${pricePerDay})
+    `
     );
 
     res.send("sou a rota de criar um jogo");

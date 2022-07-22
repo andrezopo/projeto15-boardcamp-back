@@ -28,9 +28,8 @@ export async function createCategory(req, res) {
 
     await connection.query(
       `
-    INSERT INTO categories (name) VALUES ('$1')
-    `,
-      (values = [name])
+    INSERT INTO categories (name) VALUES ('${name}')
+    `
     );
 
     res.status(201).send("Created");

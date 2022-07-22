@@ -18,21 +18,19 @@ export async function createCustomer(req, res) {
 
     const { rows: alreadyCpf } = await connection.query(
       `
-  SELECT * FROM customers WHERE cpf = $1
-  `,
-      (values = [cpf])
+  SELECT * FROM customers WHERE cpf = '${cpf}'
+  `
     );
 
-    if (alreadyCpf) {
+    if (alreadyCpf.length > 0) {
       res.status(409).send("Conflict! CPF already exists!");
       return;
     }
 
     await connection.query(
       `
-    INSERT INTO customers (name, phone, cpf, birthday) VALUES ('$1', '$2', '$3', '$4')
-    `,
-      (values = [name, phone, cpf, birthday])
+    INSERT INTO customers (name, phone, cpf, birthday) VALUES ('${name}', '${phone}', '${cpf}', '${birthday}')
+    `
     );
 
     res.status(200).send();
@@ -47,12 +45,11 @@ export async function getCustomerById(req, res) {
 
     const { rows: customer } = await connection.query(
       `
-    SELECT * FROM customers WHERE id=$1
-  `,
-      (values = [id])
+    SELECT * FROM customers WHERE id=${id}
+  `
     );
 
-    if (!customer[0]) {
+    if (customer.length === 0) {
       res.status(404).send("Customer not found!");
       return;
     }
@@ -71,33 +68,30 @@ export async function updateCustomerById(req, res) {
 
     const { rows: alreadyCpf } = await connection.query(
       `
-  SELECT * FROM customers WHERE cpf = $1
-  `,
-      (values = [cpf])
+  SELECT * FROM customers WHERE cpf = '${cpf}'
+  `
     );
 
-    if (alreadyCpf) {
+    if (alreadyCpf.length > 0) {
       res.status(409).send("Conflict! CPF already exists!");
       return;
     }
 
     const { rows: customer } = await connection.query(
       `
-  SELECT * FROM customers WHERE id=$1
-`,
-      (values = [id])
+  SELECT * FROM customers WHERE id=${id}
+`
     );
 
-    if (!customer[0]) {
+    if (customer.length === 0) {
       res.status(404).send("Customer not found!");
       return;
     }
 
     await connection.query(
       `
-    UPDATE customers SET name='$1', phone='$2', cpf='$3', birthday='$4' WHERE id=$5
-    `,
-      (values = [name, phone, cpf, birthday, id])
+    UPDATE customers SET name='${name}', phone='${phone}', cpf='${cpf}', birthday='${birthday}' WHERE id=${id}
+    `
     );
 
     res.status(200).send();
