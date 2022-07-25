@@ -2,9 +2,20 @@ import connection from "../dbStrategy/postgres.js";
 
 export async function getCustomers(req, res) {
   try {
+    const { cpf } = req.query;
+
+    if (!cpf) {
+      const { rows: customers } = await connection.query(`
+      SELECT * FROM customers
+      `);
+
+      res.status(200).send(customers);
+      return;
+    }
+
     const { rows: customers } = await connection.query(`
-  SELECT * FROM customers
-  `);
+    SELECT * FROM customers WHERE cpf LIKE '${cpf}%'
+    `);
 
     res.status(200).send(customers);
   } catch (err) {
@@ -33,7 +44,7 @@ export async function createCustomer(req, res) {
     `
     );
 
-    res.status(200).send();
+    res.status(201).send();
   } catch (err) {
     res.status(500).send("Internal Error!");
   }
@@ -66,15 +77,17 @@ export async function updateCustomerById(req, res) {
 
     const { id } = req.params;
 
-    const { rows: alreadyCpf } = await connection.query(
-      `
-  SELECT * FROM customers WHERE cpf = '${cpf}'
-  `
-    );
+    if (cpf) {
+      const { rows: alreadyCpf } = await connection.query(
+        `
+    SELECT * FROM customers WHERE cpf = '${cpf}' AND id <> ${id}
+    `
+      );
 
-    if (alreadyCpf.length > 0) {
-      res.status(409).send("Conflict! CPF already exists!");
-      return;
+      if (alreadyCpf.length > 0) {
+        res.status(409).send("Conflict! CPF already exists!");
+        return;
+      }
     }
 
     const { rows: customer } = await connection.query(

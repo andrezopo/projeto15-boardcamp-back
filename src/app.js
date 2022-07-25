@@ -5,10 +5,13 @@ import gamesRouter from "./routes/gamesRouter.js";
 import categoriesRouter from "./routes/categoriesRouter.js";
 import customersRouter from "./routes/customersRouter.js";
 import rentalRouter from "./routes/rentalsRouter.js";
+import bodyParser from "body-parser";
 
 dotenv.config();
 
 const app = express();
+
+app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use([cors(), express.json()]);
 

@@ -22,7 +22,16 @@ export async function createCategory(req, res) {
     const { name } = req.body;
 
     if (!name) {
-      res.status(422).send("Unprocessable entity! Review your request!");
+      res.status(400).send("Unprocessable entity! Review your request!");
+      return;
+    }
+
+    const { rows: repeatedCategory } = await connection.query(`
+      SELECT * FROM categories WHERE name = '${name}'
+    
+    `);
+    if (repeatedCategory.length !== 0) {
+      res.status(409).send("Conflict! Category already exists!");
       return;
     }
 
@@ -32,7 +41,7 @@ export async function createCategory(req, res) {
     `
     );
 
-    res.status(201).send("Created");
+    res.status(201).send();
   } catch (err) {
     res.status(500).send("Internal Error");
   }

@@ -2,14 +2,19 @@ import connection from "../dbStrategy/postgres.js";
 
 export async function getGames(req, res) {
   try {
-    const { rows: games } = await connection.query(`
-    SELECT * FROM games
-    `);
+    const { name } = req.query;
 
-    if (games.length === 0) {
-      res.status(404).send("No games yet!");
+    if (!name) {
+      const { rows: games } = await connection.query(`
+      SELECT g.*, c.name as "categoryName" FROM games g JOIN categories c ON g."categoryId" = c.id
+      `);
+
+      res.status(200).send(games);
       return;
     }
+    const { rows: games } = await connection.query(`
+    SELECT g.*, c.name as "categoryName" FROM games g JOIN categories c ON g."categoryId" = c.id WHERE LOWER (g.name) LIKE LOWER('${name}%')
+    `);
 
     res.status(200).send(games);
   } catch (err) {
@@ -32,7 +37,7 @@ export async function createGame(req, res) {
     `
     );
 
-    res.send("sou a rota de criar um jogo");
+    res.status(201).send();
   } catch (err) {
     res.status(500).send("Internal Error!");
   }

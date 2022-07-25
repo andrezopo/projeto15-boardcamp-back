@@ -1,9 +1,9 @@
 import customerSchema from "../schemas/customerSchema.js";
 
 export default async function customerValidation(req, res, next) {
-  const { err } = customerSchema.validate();
+  const { error } = customerSchema.validate(req.body);
 
-  if (err) {
+  if (error) {
     res.status(400).send("Bad request! Review it!");
     return;
   }
